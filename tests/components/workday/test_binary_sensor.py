@@ -277,6 +277,7 @@ class TestWorkdaySetup:
 
         entity = self.hass.states.get("binary_sensor.workday_sensor")
         assert entity.state == "on"
+        assert "Washington's Birthday" in entity.attributes.get("active_holidays")
 
     # Freeze time to test tue - Feb 18th, 2020
     @patch(FUNCTION_PATH, return_value=date(2020, 2, 18))
@@ -289,6 +290,7 @@ class TestWorkdaySetup:
 
         entity = self.hass.states.get("binary_sensor.workday_sensor")
         assert entity.state == "off"
+        assert entity.attributes.get("active_holidays") is None
 
     # Freeze time to test mon, but added as holiday - Feb 24th, 2020
     @patch(FUNCTION_PATH, return_value=date(2020, 2, 24))
