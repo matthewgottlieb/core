@@ -30,6 +30,8 @@ DEFAULT_EXCLUDES = ["sat", "sun", "holiday"]
 DEFAULT_NAME = "Workday Sensor"
 DEFAULT_OFFSET = 0
 
+ATTR_ACTIVE_HOLIDAYS = "active_holidays"
+
 
 def valid_country(value: Any) -> str:
     """Validate that the given country is supported."""
@@ -141,6 +143,7 @@ class IsWorkdaySensor(BinarySensorEntity):
         self._excludes = excludes
         self._days_offset = days_offset
         self._state = None
+        self._active_holidays = None
 
     @property
     def name(self):
@@ -178,6 +181,7 @@ class IsWorkdaySensor(BinarySensorEntity):
             CONF_WORKDAYS: self._workdays,
             CONF_EXCLUDES: self._excludes,
             CONF_OFFSET: self._days_offset,
+            ATTR_ACTIVE_HOLIDAYS: self._active_holidays,
         }
 
     async def async_update(self):
@@ -195,3 +199,6 @@ class IsWorkdaySensor(BinarySensorEntity):
 
         if self.is_exclude(day_of_week, date):
             self._state = False
+
+        if self._obj_holidays.get(date):
+            self._active_holidays = self._obj_holidays.get_list(date)
